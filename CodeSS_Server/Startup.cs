@@ -1,18 +1,19 @@
+using CodeSS_Server.Authorization;
 using CodeSS_Server.Helpers;
 using CodeSS_Server.Models;
 using CodeSS_Server.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Microsoft.EntityFrameworkCore.Design;
+using AutoMapper;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CodeSS_Server
 {
@@ -28,8 +29,10 @@ namespace CodeSS_Server
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DataContext>();
             services.AddCors();
             services.AddControllers();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
             // configure strongly typed settings object
             services.Configure<AppSettings>(Configuration.GetSection("AppSettings"));
@@ -41,11 +44,15 @@ namespace CodeSS_Server
 
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IJwtUtils, JwtUtils>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext dataContext)
         {
+            // migrate any database changes on startup (includes initial db creation)
+            dataContext.Database.Migrate();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -60,6 +67,7 @@ namespace CodeSS_Server
                 .AllowAnyOrigin()
                 .AllowAnyMethod()
                 .AllowAnyHeader());
+            app.UseMiddleware<ErrorHandlerMiddleware>();
 
             // custom jwt auth middleware
             app.UseMiddleware<JwtMiddleware>();

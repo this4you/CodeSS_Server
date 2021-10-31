@@ -1,4 +1,7 @@
-﻿using CodeSS_Server.Helpers;
+﻿using AutoMapper;
+using BCryptNet = BCrypt.Net.BCrypt;
+using CodeSS_Server.Authorization;
+using CodeSS_Server.Helpers;
 using CodeSS_Server.Models;
 using CodeSS_Server.Models.Entities;
 using Microsoft.Extensions.Options;
@@ -15,57 +18,93 @@ namespace CodeSS_Server.Services
 {
     public class UserService : IUserService
     {
-        // users hardcoded for simplicity, store in a db with hashed passwords in production applications
-        private List<User> _users = new List<User>
-        {
-            new User { Id = new Guid("015586b9-f610-4e25-a079-3fccb857da03"), Login = "Vlad", Password = "1111" }
-        };
+        private DataContext _context;
+        private IJwtUtils _jwtUtils;
+        private readonly IMapper _mapper;
 
-        private readonly AppSettings _appSettings;
-
-        public UserService(IOptions<AppSettings> appSettings)
+        public UserService(
+            DataContext context,
+            IJwtUtils jwtUtils,
+            IMapper mapper)
         {
-            _appSettings = appSettings.Value;
+            _context = context;
+            _jwtUtils = jwtUtils;
+            _mapper = mapper;
         }
 
         public AuthenticateResponse Authenticate(AuthenticateRequest model)
         {
-            var user = _users.SingleOrDefault(x => x.Login == model.Login && x.Password == model.Password);
+            var user = _context.Users.SingleOrDefault(x => x.Login == model.Login);
 
-            // return null if user not found
-            if (user == null) return null;
+            // validate
+            if (user == null || !BCryptNet.Verify(model.Password, user.Password))
+                throw new AppException("Username or password is incorrect");
 
-            // authentication successful so generate jwt token
-            var token = generateJwtToken(user);
-
-            return new AuthenticateResponse(user, token);
+            // authentication successful
+            var response = _mapper.Map<AuthenticateResponse>(user);
+            response.JWTToken = _jwtUtils.GenerateToken(user);
+            return response;
         }
 
         public IEnumerable<User> GetAll()
         {
-            return _users;
+            return _context.Users;
         }
 
         public User GetById(Guid id)
         {
-            return _users.FirstOrDefault(x => x.Id.Equals(id));
+            return getUser(id);
+        }
+
+        public void Register(RegisterRequest model)
+        {
+            // validate
+            if (_context.Users.Any(x => x.Login == model.Login))
+                throw new AppException("Login '" + model.Login + "' is already taken");
+
+            // map model to new user object
+            var user = _mapper.Map<User>(model);
+
+            // hash password
+            user.Password = BCryptNet.HashPassword(model.Password);
+
+            // save user
+            _context.Users.Add(user);
+            _context.SaveChanges();
+        }
+
+        public void Update(Guid id, UpdateRequest model)
+        {
+            var user = getUser(id);
+
+            // validate
+            if (model.Login != user.Login && _context.Users.Any(x => x.Login == model.Login))
+                throw new AppException("Username '" + model.Login + "' is already taken");
+
+            // hash password if it was entered
+            if (!string.IsNullOrEmpty(model.Password))
+                user.Password = BCryptNet.HashPassword(model.Password);
+
+            // copy model to user and save
+            _mapper.Map(model, user);
+            _context.Users.Update(user);
+            _context.SaveChanges();
+        }
+
+        public void Delete(Guid id)
+        {
+            var user = getUser(id);
+            _context.Users.Remove(user);
+            _context.SaveChanges();
         }
 
         // helper methods
 
-        private string generateJwtToken(User user)
+        private User getUser(Guid id)
         {
-            // generate token that is valid for 7 days
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new[] { new Claim("id", user.Id.ToString()) }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            var user = _context.Users.Find(id);
+            if (user == null) throw new KeyNotFoundException("User not found");
+            return user;
         }
     }
 }

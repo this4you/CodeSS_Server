@@ -6,18 +6,11 @@ using System.Threading.Tasks;
 
 namespace CodeSS_Server.Models
 {
+
     public class AuthenticateResponse
     {
         public Guid Id { get; set; }
         public string Login { get; set; }
-        public string Token { get; set; }
-
-
-        public AuthenticateResponse(User user, string token)
-        {
-            Id = user.Id;
-            Login = user.Login;
-            Token = token;
-        }
+        public string JWTToken { get; set; }
     }
 }
