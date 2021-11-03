@@ -1,5 +1,6 @@
 ﻿using CodeSS_Server.Helpers;
-using CodeSS_Server.Models.Entities;
+using Entities.Models;
+//using CodeSS_Server.Models.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;

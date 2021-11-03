@@ -22,4 +22,8 @@
     <Folder Include="Migrations\SqlServerMigrations\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Entities\Entities.csproj" />
+  </ItemGroup>
+
 </Project>

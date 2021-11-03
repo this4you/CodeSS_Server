@@ -3,7 +3,7 @@ using BCryptNet = BCrypt.Net.BCrypt;
 using CodeSS_Server.Authorization;
 using CodeSS_Server.Helpers;
 using CodeSS_Server.Models;
-using CodeSS_Server.Models.Entities;
+//using CodeSS_Server.Models.Entities;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -13,17 +13,19 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using Entities;
+using Entities.Models;
 
 namespace CodeSS_Server.Services
 {
     public class UserService : IUserService
     {
-        private DataContext _context;
+        private RepositoryContext _context;
         private IJwtUtils _jwtUtils;
         private readonly IMapper _mapper;
 
         public UserService(
-            DataContext context,
+            RepositoryContext context,
             IJwtUtils jwtUtils,
             IMapper mapper)
         {

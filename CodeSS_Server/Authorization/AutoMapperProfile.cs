@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CodeSS_Server.Models;
-using CodeSS_Server.Models.Entities;
+using Entities.Models;
+//using CodeSS_Server.Models.Entities;
 
 namespace CodeSS_Server.Helpers
 {
