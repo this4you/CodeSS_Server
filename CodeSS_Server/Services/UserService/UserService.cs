@@ -73,7 +73,7 @@ namespace CodeSS_Server.Services
             _context.SaveChanges();
         }
 
-        public void Update(Guid id, UpdateRequest model)
+        public void Update(Guid id, UpdateUserRequest model)
         {
             var user = getUser(id);
 

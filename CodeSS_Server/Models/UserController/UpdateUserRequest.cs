@@ -1,7 +1,7 @@
 ﻿
 namespace CodeSS_Server.Models
 {
-    public class UpdateRequest
+    public class UpdateUserRequest
     {
         public string Email { get; set; }
         public string Login { get; set; }

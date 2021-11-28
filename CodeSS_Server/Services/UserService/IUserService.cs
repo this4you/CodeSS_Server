@@ -13,7 +13,7 @@ namespace CodeSS_Server.Services
         IEnumerable<User> GetAll();
         User GetById(Guid id);
         void Register(RegisterRequest model);
-        void Update(Guid id, UpdateRequest model);
+        void Update(Guid id, UpdateUserRequest model);
         void Delete(Guid id);
     }
 }

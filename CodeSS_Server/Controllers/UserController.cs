@@ -64,7 +64,7 @@ namespace CodeSS_Server.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, UpdateRequest model)
+        public IActionResult Update(Guid id, UpdateUserRequest model)
         {
             _userService.Update(id, model);
             return Ok(new { message = "User updated successfully" });

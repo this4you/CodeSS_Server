@@ -8,6 +8,9 @@ namespace CodeSS_Server.Helpers
     {
         public AutoMapperProfile()
         {
+            // CodeCategoryRequest ->CodeCategory
+            CreateMap<CodeCategoryRequest, CodeCategory>();
+
             // User -> AuthenticateResponse
             CreateMap<User, AuthenticateResponse>();
 
@@ -15,7 +18,7 @@ namespace CodeSS_Server.Helpers
             CreateMap<RegisterRequest, User>();
 
             // UpdateRequest -> User
-            CreateMap<UpdateRequest, User>()
+            CreateMap<UpdateUserRequest, User>()
                 .ForAllMembers(x => x.Condition(
                     (src, dest, prop) =>
                     {
