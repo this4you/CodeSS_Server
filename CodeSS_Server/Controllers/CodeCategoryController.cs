@@ -18,7 +18,7 @@ namespace CodeSS_Server.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class CodeCategoryController : ControllerBase
+    public class CodeCategoryController : BaseController
     {
         private ICodeCategoryService _codeCategoryService;
         private IMapper _mapper;
@@ -37,16 +37,14 @@ namespace CodeSS_Server.Controllers
         [HttpGet]
         public IActionResult GetAll()
         {
-            User user = (User)HttpContext.Items["User"];
-            var categories = _codeCategoryService.GetUserCategories(user.Id);
+            var categories = _codeCategoryService.GetUserCategories(UserData.Id);
             return Ok(categories);
         }
 
         [HttpPost]
         public IActionResult Create(CodeCategoryRequest request)
         {
-            User user = (User)HttpContext.Items["User"];
-            CodeCategory codeCategory = _codeCategoryService.Create(user, request);
+            CodeCategory codeCategory = _codeCategoryService.Create(UserData, request);
             return Ok(codeCategory);
         }
 
