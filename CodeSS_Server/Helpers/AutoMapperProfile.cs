@@ -8,6 +8,8 @@ namespace CodeSS_Server.Helpers
     {
         public AutoMapperProfile()
         {
+            // CodeRequest ->Code
+            CreateMap<CodeRequest, Code>();
             // CodeCategoryRequest ->CodeCategory
             CreateMap<CodeCategoryRequest, CodeCategory>();
 

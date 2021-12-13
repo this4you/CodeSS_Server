@@ -17,6 +17,6 @@ namespace CodeSS_Server.Models
         [Required]
         public string Text { get; set; }
 
-        public Guid CodeCategory { get; set; }
+        public Guid CodeCategoryId { get; set; }
     }
 }

@@ -47,7 +47,7 @@ namespace CodeSS_Server.Services.CodeCategoryService
         public void Update(Guid id, CodeCategoryRequest model)
         {
             var category = GetCategory(id);
-            // validate
+            // validate TODO add user verify
             if (model.Name != category.Name && _context.CodeCategories.Any(x => x.Name == model.Name))
                 throw new AppException("Categories '" + model.Name + "' is already taken");
 
@@ -57,7 +57,7 @@ namespace CodeSS_Server.Services.CodeCategoryService
             _context.SaveChanges();
         }
 
-        private CodeCategory GetCategory(Guid id)
+        public CodeCategory GetCategory(Guid id)
         {
             var category = _context.CodeCategories.Find(id);
             if (category == null) throw new KeyNotFoundException("Category not found");

@@ -11,5 +11,6 @@ namespace CodeSS_Server.Services
         CodeCategory Create(User user, CodeCategoryRequest request);
         void Update(Guid id, CodeCategoryRequest model);
         void Delete(Guid id);
+        CodeCategory GetCategory(Guid id);
     }
 }

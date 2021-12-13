@@ -15,6 +15,7 @@ using Microsoft.EntityFrameworkCore.Design;
 using AutoMapper;
 using System;
 using CodeSS_Server.Services.CodeCategoryService;
+using CodeSS_Server.Services.CodeService;
 
 namespace CodeSS_Server
 {
@@ -46,6 +47,7 @@ namespace CodeSS_Server
             // configure DI for application services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICodeCategoryService, CodeCategoryService>();
+            services.AddScoped<ICodeService, CodeService>();
 
             services.AddScoped<IJwtUtils, JwtUtils>();
         }
