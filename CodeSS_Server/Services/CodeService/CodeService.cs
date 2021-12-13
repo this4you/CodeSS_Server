@@ -51,7 +51,18 @@ namespace CodeSS_Server.Services.CodeService
 
         public IEnumerable<Code> GetUserCodes(Guid userId)
         {
-            return _context.Codes.Where(c => c.User.Id == userId);
+            var cods = _context.Codes
+                .Where(c => c.User.Id == userId)
+                .Join(_context.CodeCategories, code => code.CodeCategory.Id, category => category.Id,
+                (code, category) => new Code
+                {
+                    Id = code.Id,
+                    Name = code.Name,
+                    Text = code.Text,
+                    CodeCategory = category,
+                    Title = code.Title
+                }).ToList();
+            return cods;
         }
 
         public void Update(Guid id, CodeRequest model)

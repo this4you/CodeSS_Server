@@ -12,11 +12,9 @@ namespace CodeSS_Server.Models.Entities
 
         [Column(TypeName = "varchar(MAX)")]
         public string Text { get; set; }
+        public CodeCategory CodeCategory { get; set; }
 
         [JsonIgnore]
         public User User { get; set; }
-
-        [JsonIgnore]
-        public CodeCategory CodeCategory { get; set; }
     }
 }
