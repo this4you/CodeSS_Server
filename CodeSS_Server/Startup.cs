@@ -16,6 +16,8 @@ using AutoMapper;
 using System;
 using CodeSS_Server.Services.CodeCategoryService;
 using CodeSS_Server.Services.CodeService;
+using CodeSS_Server.Services.LinkConroller;
+using CodeSS_Server.Services.LinkService;
 
 namespace CodeSS_Server
 {
@@ -48,6 +50,7 @@ namespace CodeSS_Server
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<ICodeCategoryService, CodeCategoryService>();
             services.AddScoped<ICodeService, CodeService>();
+            services.AddScoped<ILinkService, LinkService>();
 
             services.AddScoped<IJwtUtils, JwtUtils>();
         }

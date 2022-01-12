@@ -22,5 +22,8 @@ namespace CodeSS_Server.Helpers
         public DbSet<User> Users { get; set; }
         public DbSet<CodeCategory> CodeCategories { get; set; }
         public DbSet<Code> Codes { get; set; }
+        public DbSet<Link> Links{ get; set; }
+
+
     }
 }
