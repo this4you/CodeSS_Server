@@ -44,7 +44,7 @@ namespace CodeSS_Server.Services.CodeService
 
         public void Delete(Guid id)
         {
-            var entity = GetCode(id);
+            var entity = GetById(id);
             _context.Codes.Remove(entity);
             _context.SaveChanges();
         }
@@ -59,15 +59,14 @@ namespace CodeSS_Server.Services.CodeService
                     Id = code.Id,
                     Name = code.Name,
                     Text = code.Text,
-                    CodeCategory = category,
-                    Title = code.Title
+                    CodeCategory = category
                 }).ToList();
             return cods;
         }
 
         public void Update(Guid id, CodeRequest model)
         {
-            var code = GetCode(id);
+            var code = GetById(id);
             // validate
             if (model.Name != code.Name && _context.CodeCategories.Any(x => x.Name == model.Name))
                 throw new AppException("Code '" + model.Name + "' is already taken");
@@ -78,7 +77,7 @@ namespace CodeSS_Server.Services.CodeService
             _context.SaveChanges();
         }
 
-        public Code GetCode(Guid id)
+        public Code GetById(Guid id)
         {
             var code = _context.Codes.Find(id);
             if (code == null) throw new KeyNotFoundException("Code not found");

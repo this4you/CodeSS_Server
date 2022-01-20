@@ -8,7 +8,6 @@ namespace CodeSS_Server.Models.Entities
     {
         public Guid Id { get; set; }
         public String Name { get; set; }
-        public String Title { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]
         public string Text { get; set; }

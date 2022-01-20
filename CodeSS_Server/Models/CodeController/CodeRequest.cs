@@ -12,9 +12,6 @@ namespace CodeSS_Server.Models
         public String Name { get; set; }
 
         [Required]
-        public String Title { get; set; }
-
-        [Required]
         public string Text { get; set; }
 
         public Guid CodeCategoryId { get; set; }

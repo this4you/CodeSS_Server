@@ -39,6 +39,13 @@ namespace CodeSS_Server.Controllers
             return Ok(codes);
         }
 
+        [HttpGet("{id}")]
+        public IActionResult GetById(Guid id)
+        {
+            var code = _codeService.GetById(id);
+            return Ok(code);
+        }
+
         [HttpPost]
         public IActionResult Create(CodeRequest request)
         {
