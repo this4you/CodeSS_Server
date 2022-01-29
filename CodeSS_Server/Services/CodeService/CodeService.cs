@@ -79,7 +79,15 @@ namespace CodeSS_Server.Services.CodeService
 
         public Code GetById(Guid id)
         {
-            var code = _context.Codes.Find(id);
+            var code = _context.Codes.Where(c => c.Id == id)
+                .Join(_context.CodeCategories, code => code.CodeCategory.Id, category => category.Id,
+                (code, category) => new Code {
+                    Id = code.Id,
+                    Name = code.Name,
+                    Text = code.Text,
+                    CodeCategory = category
+                }).ToList().First();
+            ;
             if (code == null) throw new KeyNotFoundException("Code not found");
             return code;
         }

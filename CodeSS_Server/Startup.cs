@@ -69,9 +69,13 @@ namespace CodeSS_Server
 
             // global cors policy
             app.UseCors(x => x
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader());
+				//.WithOrigins("https://learn.javascript.ru")
+				//.AllowAnyHeader()
+				//.AllowAnyMethod()
+				.AllowAnyOrigin()
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+				);
             app.UseMiddleware<ErrorHandlerMiddleware>();
 
             // custom jwt auth middleware
