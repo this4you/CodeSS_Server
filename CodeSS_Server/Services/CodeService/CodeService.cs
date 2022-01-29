@@ -73,6 +73,7 @@ namespace CodeSS_Server.Services.CodeService
 
             // copy model to user and save
             _mapper.Map(model, code);
+            code.CodeCategory = _codeCategoryService.GetCategory(model.CodeCategoryId);
             _context.Codes.Update(code);
             _context.SaveChanges();
         }
