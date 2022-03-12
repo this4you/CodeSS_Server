@@ -36,8 +36,12 @@ namespace CodeSS_Server.Controllers
         [HttpGet()]
         public IActionResult GetAll([FromQuery(Name = "limit")] int count)
         {
-            var codes = _codeService.GetUserCodes(UserData.Id);
-            //var codes = _codeService.Get(orderBy: q => q.OrderBy(c => c.));
+            //var codes = _codeService.GetUserCodes(UserData.Id);
+            var codes = _codeService.Get(
+                filter: c => c.User.Id == UserData.Id,
+                orderBy: q => q.OrderByDescending(c => c.UpdatedOn),
+                includeProperties: "CodeCategory"
+            ).Take(Math.Max(count, 9));
             return Ok(codes);
         }
 
