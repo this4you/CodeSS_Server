@@ -4,9 +4,8 @@ using System.Text.Json.Serialization;
 
 namespace CodeSS_Server.Models.Entities
 {
-    public class Code
+    public class Code : BaseEntity
     {
-        public Guid Id { get; set; }
         public String Name { get; set; }
 
         [Column(TypeName = "varchar(MAX)")]

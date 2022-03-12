@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CodeSS_Server.Models.Entities
 {
-    public class CodeCategory
+    public class CodeCategory : BaseEntity
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
 
         [JsonIgnore]

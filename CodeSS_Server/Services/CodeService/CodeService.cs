@@ -12,7 +12,6 @@ namespace CodeSS_Server.Services.CodeService
 {
     public class CodeService : RepositoryBase<Code>, ICodeService
     {
-        //private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly ICodeCategoryService _codeCategoryService;
         public CodeService(DataContext context,

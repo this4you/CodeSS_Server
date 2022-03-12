@@ -32,10 +32,12 @@ namespace CodeSS_Server.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
-        public IActionResult GetAll()
+
+        [HttpGet()]
+        public IActionResult GetAll([FromQuery(Name = "limit")] int count)
         {
             var codes = _codeService.GetUserCodes(UserData.Id);
+            //var codes = _codeService.Get(orderBy: q => q.OrderBy(c => c.));
             return Ok(codes);
         }
 

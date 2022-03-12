@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace CodeSS_Server.Models.Entities
 {
-    public class User
+    public class User : BaseEntity
     {
-        public Guid Id { get; set; }
         public string Login { get; set; }
 
         public string Email { get; set; }

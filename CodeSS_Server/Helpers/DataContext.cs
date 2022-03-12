@@ -1,6 +1,8 @@
 ﻿using CodeSS_Server.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using System;
+using System.Linq;
 
 namespace CodeSS_Server.Helpers
 {
@@ -17,6 +19,27 @@ namespace CodeSS_Server.Helpers
         {
             // connect to sql server database
             options.UseSqlServer(Configuration.GetConnectionString("WebApiDatabase"));
+        }
+
+        public override int SaveChanges()
+        {
+            var entries = ChangeTracker
+                .Entries()
+                .Where(e => e.Entity is BaseEntity && (
+                        e.State == EntityState.Added
+                        || e.State == EntityState.Modified));
+
+            foreach (var entityEntry in entries)
+            {
+                ((BaseEntity)entityEntry.Entity).UpdatedOn = DateTime.Now;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    ((BaseEntity)entityEntry.Entity).CreatedOn = DateTime.Now;
+                }
+            }
+
+            return base.SaveChanges();
         }
 
         public DbSet<User> Users { get; set; }
