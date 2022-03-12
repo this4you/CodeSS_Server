@@ -1,24 +1,24 @@
 ﻿using AutoMapper;
+using CodeSS_Server.CoreEF.Repository;
 using CodeSS_Server.Helpers;
 using CodeSS_Server.Models;
 using CodeSS_Server.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CodeSS_Server.Services.CodeService
 {
-    public class CodeService : ICodeService
+    public class CodeService : RepositoryBase<Code>, ICodeService
     {
-        private readonly DataContext _context;
+        //private readonly DataContext _context;
         private readonly IMapper _mapper;
         private readonly ICodeCategoryService _codeCategoryService;
         public CodeService(DataContext context,
             IMapper mapper,
-            ICodeCategoryService codeCategoryService)
+            ICodeCategoryService codeCategoryService) : base(context)
         {
-            _context = context;
             _mapper = mapper;
             _codeCategoryService = codeCategoryService;
         }
@@ -32,63 +32,36 @@ namespace CodeSS_Server.Services.CodeService
                 {
                     var category = _codeCategoryService.GetCategory(model.CodeCategoryId);
                     code.CodeCategory = category;
-                } catch(Exception e)
+                }
+                catch (Exception e)
                 {
                     code.CodeCategory = null;
                 }
             }
-            _context.Codes.Add(code);
-            _context.SaveChanges();
+            Create(code);
+            Save();
             return code;
-        }
-
-        public void Delete(Guid id)
-        {
-            var entity = GetById(id);
-            _context.Codes.Remove(entity);
-            _context.SaveChanges();
         }
 
         public IEnumerable<Code> GetUserCodes(Guid userId)
         {
-            var cods = _context.Codes
-                .Where(c => c.User.Id == userId)
-                .Join(_context.CodeCategories, code => code.CodeCategory.Id, category => category.Id,
-                (code, category) => new Code
-                {
-                    Id = code.Id,
-                    Name = code.Name,
-                    Text = code.Text,
-                    CodeCategory = category
-                }).ToList();
-            return cods;
+
+            var codes = FindByCondition(c => c.User.Id == userId).Include("CodeCategory");
+            return codes;
         }
 
         public void Update(Guid id, CodeRequest model)
         {
             var code = GetById(id);
-            // validate
-            if (model.Name != code.Name && _context.CodeCategories.Any(x => x.Name == model.Name))
-                throw new AppException("Code '" + model.Name + "' is already taken");
-
-            // copy model to user and save
             _mapper.Map(model, code);
             code.CodeCategory = _codeCategoryService.GetCategory(model.CodeCategoryId);
-            _context.Codes.Update(code);
-            _context.SaveChanges();
+            Update(code);
+            Save();
         }
 
-        public Code GetById(Guid id)
+        public override Code GetById(Guid id)
         {
-            var code = _context.Codes.Where(c => c.Id == id)
-                .Join(_context.CodeCategories, code => code.CodeCategory.Id, category => category.Id,
-                (code, category) => new Code {
-                    Id = code.Id,
-                    Name = code.Name,
-                    Text = code.Text,
-                    CodeCategory = category
-                }).ToList().First();
-            ;
+            var code = FindByCondition(c => c.Id == id).Include("CodeCategory").First();
             if (code == null) throw new KeyNotFoundException("Code not found");
             return code;
         }
