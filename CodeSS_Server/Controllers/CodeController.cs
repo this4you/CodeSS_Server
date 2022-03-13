@@ -34,15 +34,15 @@ namespace CodeSS_Server.Controllers
 
 
         [HttpGet()]
-        public IActionResult GetAll([FromQuery(Name = "limit")] int count)
+        public IActionResult GetAll([FromQuery(Name = "categoryId")] Guid categoryId, [FromQuery(Name = "limit")] int limit)
         {
             //var codes = _codeService.GetUserCodes(UserData.Id);
             var codes = _codeService.Get(
-                filter: c => c.User.Id == UserData.Id,
+                filter: c => c.User.Id == UserData.Id && (c.CodeCategory.Id == categoryId || categoryId == Guid.Empty),
                 orderBy: q => q.OrderByDescending(c => c.UpdatedOn),
                 includeProperties: "CodeCategory"
-            ).Take(Math.Max(count, 9));
-            return Ok(codes);
+            );
+            return limit > 0 ? Ok(codes.Take(limit)) : Ok(codes);
         }
 
         [HttpGet("{id}")]
