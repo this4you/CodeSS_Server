@@ -17,7 +17,7 @@ namespace CodeSS_Server.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class UserController : ControllerBase
+    public class UserController : BaseController
     {
         private IUserService _userService;
         private IMapper _mapper;
@@ -50,17 +50,9 @@ namespace CodeSS_Server.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetById()
         {
-            var users = _userService.GetAll();
-            return Ok(users);
-        }
-
-        [HttpGet("{id}")]
-        public IActionResult GetById(Guid id)
-        {
-            var user = _userService.GetById(id);
-            return Ok(user);
+            return Ok(UserData);
         }
 
         [HttpPut("{id}")]
