@@ -70,6 +70,7 @@ namespace CodeSS_Server.Controllers
         public IActionResult Delete(Guid id)
         {
             _codeService.DeleteById(id);
+            _codeService.Save();
             return Ok(new { message = "Code deleted successfully" });
         }
     }
