@@ -3,10 +3,12 @@ using CodeSS_Server.Helpers;
 using CodeSS_Server.Models;
 using CodeSS_Server.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -21,16 +23,34 @@ namespace CodeSS_Server.Controllers
     {
         private IUserService _userService;
         private IMapper _mapper;
-        private readonly AppSettings _appSettings;
 
         public UserController(
             IUserService userService,
-            IMapper mapper,
-            IOptions<AppSettings> appSettings)
+            IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;
-            _appSettings = appSettings.Value;
+        }
+
+        [HttpPost("avatar"), DisableRequestSizeLimit]
+        public IActionResult LoadAvatar(IFormFile file)
+        {
+            if (file.Length > 0)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    file.CopyTo(ms);
+                    UserData.Avatar = ms.ToArray();
+                    _userService.Update(UserData);
+                    _userService.Save();
+                }
+            }
+            else
+            {
+                throw new Exception("File not load");
+            }
+            //_userService.Update
+            return Ok();
         }
 
         [AllowAnonymous]
@@ -65,7 +85,7 @@ namespace CodeSS_Server.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(Guid id)
         {
-            _userService.Delete(id);
+            _userService.DeleteById(id);
             return Ok(new { message = "User deleted successfully" });
         }
     }
